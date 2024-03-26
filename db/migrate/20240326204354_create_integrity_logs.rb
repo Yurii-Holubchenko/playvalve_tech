@@ -1,0 +1,15 @@
+class CreateIntegrityLogs < ActiveRecord::Migration[7.1]
+  def change
+    create_table :integrity_logs do |t|
+      t.string :idfa
+      t.string :ban_status
+      t.string :ip
+      t.string :rooted_device
+      t.string :country
+      t.string :proxy
+      t.string :vpn
+
+      t.datetime :created_at
+    end
+  end
+end

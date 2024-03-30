@@ -18,10 +18,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_26_204354) do
     t.string "idfa"
     t.string "ban_status"
     t.string "ip"
-    t.string "rooted_device"
+    t.boolean "rooted_device"
     t.string "country"
-    t.string "proxy"
-    t.string "vpn"
+    t.boolean "proxy"
+    t.boolean "vpn"
     t.datetime "created_at"
   end
 

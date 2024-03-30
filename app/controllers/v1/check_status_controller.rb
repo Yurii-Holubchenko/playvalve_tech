@@ -1,14 +1,11 @@
 module V1
   class CheckStatusController < ApplicationController
     def create
-      user = User.find_or_create_by(idfa: permitted_params[:idfa])
+      user = User.find_by(idfa: permitted_params[:idfa])
 
-      unless user.banned?
-        valid_device = ::DeviceStatusCheck.new(
-          user_country,
-          params[:rooted_device],
-          user_ip
-        ).valid?
+      unless user.present? && user.banned?
+        valid_device = device_status.valid?
+        user = User.find_or_create_by(idfa: permitted_params[:idfa])
 
         unless valid_device
           user.update(ban_status: User::BANNED)
@@ -19,6 +16,15 @@ module V1
     end
 
     private
+
+    def device_status
+      @device_status ||=::DeviceStatusCheck.new(
+        permitted_params[:idfa],
+        user_country,
+        permitted_params[:rooted_device],
+        user_ip
+      )
+    end
 
     def user_country
       request.env["HTTP_CF_IPCOUNTRY"]

@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe DeviceStatusCheck do
-  subject(:instance) { described_class.new("US", rooted_device, "127.0.0.1") }
+  subject(:instance) { described_class.new("111", "US", rooted_device, "127.0.0.1") }
 
   let(:rooted_device) { false }
 

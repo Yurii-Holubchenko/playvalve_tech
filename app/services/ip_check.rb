@@ -1,5 +1,6 @@
 class IpCheck
-  def initialize(ip_address)
+  def initialize(idfa, ip_address)
+    @idfa = idfa
     @ip_address = ip_address
     @api_key = Rails.application.credentials.vpn_api.api_key
   end
@@ -14,11 +15,14 @@ class IpCheck
 
   private
 
-  attr_reader :ip_address, :api_key
+  attr_reader :idfa, :ip_address, :api_key
 
   def cached_response
-    response = $redis.get(ip_address)
-    JSON.parse(response, symbolize_names: true) if response.present?
+    keys = [:proxy, :vpn]
+    response = $redis.get(idfa)
+    body = JSON.parse(response, symbolize_names: true)
+
+    (body[:security] && body[:security].keys.all? { |k| keys.include?(k) }) ? body : false
   end
 
   def vpn_api_request
@@ -26,8 +30,12 @@ class IpCheck
   end
 
   def vpn_api_response
-    body = JSON.parse(vpn_api_request.body, symbolize_names: true)
-    $redis.set(body[:ip], body.to_json, ex: 86400)
+    response = $redis.get(idfa)
+    body = JSON.parse(response, symbolize_names: true)
+    api_body = JSON.parse(vpn_api_request.body, symbolize_names: true)
+    body.update(api_body)
+
+    $redis.set(idfa, body.to_json)
     body
   end
 end

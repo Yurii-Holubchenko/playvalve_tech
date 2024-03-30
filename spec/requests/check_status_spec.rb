@@ -25,9 +25,22 @@ describe "CheckStatusController" do
     end
 
     context "when user exists" do
+      let(:cached_data) do
+        {
+          ip: "127.0.0.1",
+          rooted_device: false,
+          country: "US",
+          security: {
+            proxy: false,
+            vpn: false
+          }
+        }
+      end
+
       before do
-        create(:user)
         allow_any_instance_of(DeviceStatusCheck).to receive(:valid?).and_return(false)
+        allow_any_instance_of(Redis).to receive(:get).with(any_args).and_return(cached_data.to_json)
+        create(:user)
       end
 
       it "updates existing user" do

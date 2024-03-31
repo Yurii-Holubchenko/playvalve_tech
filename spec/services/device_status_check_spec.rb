@@ -1,9 +1,12 @@
 require "rails_helper"
 
 describe DeviceStatusCheck do
-  subject(:instance) { described_class.new("111", "US", rooted_device, "127.0.0.1") }
+  subject(:instance) { described_class.new(idfa, rooted_device, user_country, user_ip) }
 
+  let(:idfa) { "111" }
   let(:rooted_device) { false }
+  let(:user_country) { "US" }
+  let(:user_ip) { "127.0.0.1" }
 
   context "#valid?" do
     context "with user_country" do

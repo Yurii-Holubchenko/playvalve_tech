@@ -4,7 +4,7 @@ describe CountryCheck do
   subject(:instance) { described_class.new(country_code) }
 
   before do
-    allow_any_instance_of(Redis).to receive(:smembers).with(any_args).and_return(%w(US CA GB))
+    allow_any_instance_of(Redis).to receive(:smembers).and_return(%w(US CA GB))
   end
 
   context "#valid?" do

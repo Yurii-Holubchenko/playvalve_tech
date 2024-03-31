@@ -1,8 +1,8 @@
 class DeviceStatusCheck
-  def initialize(idfa, user_country, rooted_device, user_ip)
+  def initialize(idfa, rooted_device, user_country, user_ip)
     @idfa = idfa
-    @user_country = user_country
     @rooted_device = rooted_device
+    @user_country = user_country
     @user_ip = user_ip
     initialize_redis_cache
   end
@@ -13,7 +13,7 @@ class DeviceStatusCheck
 
   private
 
-  attr_reader :user_country, :rooted_device, :user_ip, :idfa
+  attr_reader :idfa, :rooted_device, :user_country, :user_ip
 
   def initialize_redis_cache
     body = $redis.get(idfa) ? JSON.parse($redis.get(idfa), symbolize_names: true) : {}

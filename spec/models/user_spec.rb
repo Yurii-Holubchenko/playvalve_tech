@@ -49,4 +49,25 @@ describe User do
       it { expect(user).not_to be_valid }
     end
   end
+
+  context "with before_save callback" do
+    let(:user) { User.create(idfa: "111") }
+    let(:cached_data) do
+      {
+        ip: "127.0.0.1",
+        rooted_device: false,
+        country: "US",
+        security: {
+          proxy: false,
+          vpn: false
+        }
+      }
+    end
+
+    before do
+      allow_any_instance_of(Redis).to receive(:get).and_return(cached_data.to_json)
+    end
+
+    it { expect { user }.to change(IntegrityLog, :count).by(1) }
+  end
 end

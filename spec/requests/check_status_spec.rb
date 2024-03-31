@@ -2,13 +2,8 @@ require "rails_helper"
 
 describe "CheckStatusController" do
   context "#create" do
-    let(:params) do
-      {
-        idfa: "111",
-        rooted_device: false
-      }
-    end
     let(:headers) { {"HTTP_CF_IPCOUNTRY" => "US"} }
+    let(:params) { {idfa: "111", rooted_device: false} }
 
     context "when user does not exists" do
       before do
@@ -39,11 +34,11 @@ describe "CheckStatusController" do
 
       before do
         allow_any_instance_of(DeviceStatusCheck).to receive(:valid?).and_return(false)
-        allow_any_instance_of(Redis).to receive(:get).with(any_args).and_return(cached_data.to_json)
+        allow_any_instance_of(Redis).to receive(:get).and_return(cached_data.to_json)
         create(:user)
       end
 
-      it "updates existing user" do
+      it "updates existing user with banned status" do
         post "/v1/users/check_status", params: params, headers: headers
 
         expect(response.content_type).to eq("application/json; charset=utf-8")
